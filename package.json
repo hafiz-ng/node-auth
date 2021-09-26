@@ -1,0 +1,21 @@
+{
+  "name": "node-auth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^10.0.0",
+    "fastify": "^3.21.6",
+    "fastify-static": "^4.2.3",
+    "mongo": "^0.1.0",
+    "mongodb": "^4.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

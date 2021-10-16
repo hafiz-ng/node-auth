@@ -6,6 +6,8 @@ const { genSalt, hash } = bcrypt
 
 export async function registerUser(email, password) {
     
+
+    // Dynamic import
     const {user} = await import("../user/user.js")
 
     // generate the salt

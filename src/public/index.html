@@ -11,37 +11,78 @@
     <h3>Register Form</h3>
 
     <form id="register-form">
-        <input type="email" name="email" >
-        <input type="password" name="password"><br>
+        <label for="email">Email:
+            <input type="email" name="email" id="email" >
+        </label>
+        
+        <label for="password">Password:
+            <input type="password" name="password" id="password"><br><br>
+        </label>
         <button type="submit">Register</button>
+    </label>
     </form>
+    <br>
+    <hr> 
+    <br>
+
+    <h3>Login Form</h3>
+
+    <form id="login-form">
+        <input type="email" name="email" >
+        <input type="password" name="password"><br><br>
+        <button type="submit">Log In</button>
+    </form>
+
 
     <script>
 
         ;(() => {
-            const form = document.getElementById("register-form")
-
-            form.addEventListener("submit", async (e) => {
-                
+            const registerForm = document.getElementById("register-form")
+            registerForm.addEventListener("submit", async (e) => {
                 e.preventDefault() // prevents form from refreshing the page when you hit submit
-
                 try {
-
                     // Get all of the values from the form and reduce down to a single object 
-                    const values = Object.values(form).reduce((obj, field) => {
+                    const values = Object.values(registerForm).reduce((obj, field) => {
 
                     if (field.name) {
                         obj[field.name] = field.value
                     }
                     return obj
                 }, {})
-                console.log("values", values)
-                fetch('/api/register', {
+                // console.log("values", values)
+                const res = fetch('/api/register', {
                     method : "POST",
                     body : JSON.stringify(values),
                     headers : {"Content-type" : "application/json; charset=UTF-8"},
                 })
 
+                } catch (e) {
+                    console.error(e)
+                }
+            })
+
+            // find form element
+            const loginForm = document.getElementById("login-form")
+
+            // wait for event
+            loginForm.addEventListener("submit", async (e) => {
+                e.preventDefault() // prevents form from refreshing the page when you hit submit
+                try {
+                    // Get all of the values from the form and reduce down to a single object 
+                    const values = Object.values(loginForm).reduce((obj, field) => {
+
+                    if (field.name) {
+                        obj[field.name] = field.value
+                    }
+                    return obj
+                }, {})
+                // console.log("values", values)
+                
+                const res = fetch('/api/authorize', {
+                    method : "POST",
+                    body : JSON.stringify(values),
+                    headers : {"Content-type" : "application/json; charset=UTF-8"},
+                })
                 } catch (e) {
                     console.error(e)
                 }

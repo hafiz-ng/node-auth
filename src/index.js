@@ -1,10 +1,12 @@
 import './env.js'
 import {fastify} from 'fastify'
 import fastifyStatic from 'fastify-static'
+import fastifyCookie from 'fastify-cookie'
 import path from 'path'
 import {fileURLToPath} from 'url'
 import {connectDb} from './db.js'
 import {registerUser} from './accounts/register.js'
+import {authorizeUser} from './accounts/authorize.js'
 
 
 // ESM Specific fix
@@ -16,6 +18,10 @@ const app = fastify()
 async function startApp() {
     try {
         console.log(process.env.API_URL)
+
+        app.register(fastifyCookie, {
+            secret : process.env.COOKIE_SIGNATURE
+        })
         app.register(fastifyStatic, {
             root : path.join(__dirname, "public")
         })
@@ -24,6 +30,27 @@ async function startApp() {
             try {
                 const userId = await registerUser(request.body.email, request.body.password)
                 console.log('userId', userId)
+            } catch (e) {
+                console.error(e)
+            }
+        })
+
+        app.post("/api/authorize", {}, async (request, reply) => {
+            try {
+                console.log(request.body.email, request.body.password)
+                const userId = await authorizeUser(request.body.email, request.body.password)
+                console.log('userId', userId)
+
+                // generate auth token
+
+                // set cookies
+                reply.setCookie('textCookie', 'the value is this', {
+                    path : "/",
+                    domain : "localhost",
+                    httpOnly : true,
+                }).send({
+                    data : "just testing"
+                })
             } catch (e) {
                 console.error(e)
             }

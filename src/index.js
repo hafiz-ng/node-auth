@@ -7,6 +7,7 @@ import {fileURLToPath} from 'url'
 import {connectDb} from './db.js'
 import {registerUser} from './accounts/register.js'
 import {authorizeUser} from './accounts/authorize.js'
+import { logUserIn } from './accounts/logUserIn.js'
 
 
 // ESM Specific fix

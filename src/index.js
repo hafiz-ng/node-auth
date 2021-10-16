@@ -6,6 +6,7 @@ import {fileURLToPath} from 'url'
 import {connectDb} from './db.js'
 import {registerUser} from './accounts/register.js'
 
+
 // ESM Specific fix
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)

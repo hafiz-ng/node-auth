@@ -1,4 +1,5 @@
-import bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs' // takes care of salting and hashing
+import {user} from "../user/user.js"
 const { genSalt, hash } = bcrypt
 
 

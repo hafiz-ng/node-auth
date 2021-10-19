@@ -8,6 +8,10 @@ import {connectDb} from './db.js'
 import {registerUser} from './accounts/register.js'
 import {authorizeUser} from './accounts/authorize.js'
 import {logUserIn} from './accounts/logUserIn.js'
+import {logUserOut} from './accounts/logUserOut.js'
+import { getUserFromCookies } from './accounts/user.js'
+import { request } from 'http'
+import { user } from './user/user.js'
 
 
 // ESM Specific fix
@@ -27,10 +31,59 @@ async function startApp() {
             root : path.join(__dirname, "public")
         })
 
+        app.get("/test", {}, async(request, reply) => {
+            
+            try {
+                // verify the user login
+                const user = await getUserFromCookies(request, reply)
+                
+                // return user email, if it exists, otherwise return unauthorized
+                    if (user?._id) {
+                        reply.send({
+                            data : user,
+                        })
+                    } else {
+                        reply.send({
+                            data : "User Look up failed"
+                        })
+                    }
+
+                } catch (e) {
+                    throw new Error(e)
+                }
+        })
         app.post("/api/register", {}, async (request, reply) => {
             try {
                 const userId = await registerUser(request.body.email, request.body.password)
-                console.log('userId', userId)
+                if (userId) {
+                    await logUserIn(userId, request, reply)
+                    reply.send({
+                        data : {
+                            status : "success",
+                            userId,
+                        }
+                    })
+                }
+
+            } catch (e) {
+                console.error(e)
+                reply.send({
+                    data : {
+                        status : "Failed",
+                        userId,
+                    }
+                })
+            }
+        })
+
+        app.post("/api/logout", {}, async (request, reply) => {
+            try {
+                await logUserOut(request, reply)
+                reply.send({
+                    data : {
+                        status : "SUCCESS",
+                    },
+                })
             } catch (e) {
                 console.error(e)
             }
@@ -43,16 +96,15 @@ async function startApp() {
 
                 if(isAuthorized) {
                    await logUserIn(userId, request, reply) 
+                   reply.send({
+                    data : {
+                        status : "SUCCESS",
+                        userId,
+                    },
+                })
                 }
-                // generate auth token
-
-                // set cookies
-                reply.setCookie('textCookie', 'the value is this', {
-                    path : "/",
-                    domain : "localhost",
-                    httpOnly : true,
-                }).send({
-                    data : "just testing"
+                reply.send({
+                    data : "Authentication Failed"
                 })
             } catch (e) {
                 console.error(e)

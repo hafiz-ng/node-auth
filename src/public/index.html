@@ -33,8 +33,25 @@
         <button type="submit">Log In</button>
     </form>
 
+    <br>
+    <hr> 
+    <br>
+
+    <button onclick="logout()">Log Out</button>
 
     <script>
+
+        async function logout() {
+
+            try {
+                const res = await fetch("api/logout", {
+                    method : "POST",
+                })
+            } catch (e) {
+                console.error(e)
+            }
+
+        }
 
         ;(() => {
             const registerForm = document.getElementById("register-form")

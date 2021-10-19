@@ -1,3 +1,3 @@
 import { client } from "../db.js";
 
-export const user = client.db("test").collection("session")
+export const session = client.db("test").collection("session")

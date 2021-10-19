@@ -21,9 +21,11 @@ export async function createSession(userId, connection) {
             updatedAt : new Date(),
             createdAt : new Date()
         })
+
         // return the session token
         return sessionToken
-    } catch  (e) {
+    } catch (e) {
             throw new Error('Session creation failed')
         }
 }
+

@@ -1,3 +1,9 @@
+/*
+* Node Authentication 1.0 using JS and Node
+by Hafiz (https://hafiz.ng)
+*/
+
+
 import './env.js'
 import {fastify} from 'fastify'
 import fastifyStatic from 'fastify-static'

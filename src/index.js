@@ -110,6 +110,23 @@ async function startApp() {
                 console.error(e)
             }
         })
+
+        // app.post("/api/authorize", {}, async (request, reply) => {
+        //     try {
+        //         console.log(request.body.email, request.body.password)
+        //         const {userId }= await authorizeUser(request.body.email, request.body.password)
+
+        //         reply.setCookie("accessToken", "222333", {
+        //             path: "/",
+        //             domain : "localhost",
+        //             httpOnly : true,
+        //        }).send({
+        //            data : "Testing cookie"
+        //        })
+        //     } catch (e) {
+        //         console.error(e)
+        //     }
+        // })
         await app.listen(3000)
         console.log(`Server listening on port: 3000`)
     } catch (e) {

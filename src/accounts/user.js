@@ -80,12 +80,14 @@ export async function refreshTokens(sessionToken, userId, reply) {
             .setCookie("refreshToken", refreshToken, {
                 path : "/",
                 domain : "localhost",
+                secure: true,
                 httpOnly : true,
                 expires : refreshExpires
             })
             .setCookie("accessToken", accessToken, {
                 path : "/",
                 domain : "localhost",
+                secure: true,
                 httpOnly : true,
             })
     } catch (e) {

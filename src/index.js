@@ -2,6 +2,7 @@ import './env.js'
 import {fastify} from 'fastify'
 import fastifyStatic from 'fastify-static'
 import fastifyCookie from 'fastify-cookie'
+import fastifyCors from 'fastify-cors'
 import path from 'path'
 import {fileURLToPath} from 'url'
 import {connectDb} from './db.js'
@@ -12,6 +13,7 @@ import {logUserOut} from './accounts/logUserOut.js'
 import { getUserFromCookies } from './accounts/user.js'
 import { request } from 'http'
 import { user } from './user/user.js'
+import { sendEmail, mailInit } from './mail/index.js'
 
 
 // ESM Specific fix
@@ -22,7 +24,18 @@ const app = fastify()
 
 async function startApp() {
     try {
-        console.log(process.env.API_URL)
+        await mailInit()
+        await sendEmail({
+            subject : "New Func",
+            html : "<h2>New HTML who dis?"
+        })
+
+        app.register(fastifyCors, {
+            origin : [
+                /\.nodeauth.dev/,
+                "https://nodeauth.dev",
+            ], credentials : true
+        })
 
         app.register(fastifyCookie, {
             secret : process.env.COOKIE_SIGNATURE
@@ -92,7 +105,7 @@ async function startApp() {
         app.post("/api/authorize", {}, async (request, reply) => {
             try {
                 console.log(request.body.email, request.body.password)
-                const {isAuthorized, userId }= await authorizeUser(request.body.email, request.body.password)
+                const {isAuthorized, userId } = await authorizeUser(request.body.email, request.body.password)
 
                 if(isAuthorized) {
                    await logUserIn(userId, request, reply) 
@@ -111,22 +124,6 @@ async function startApp() {
             }
         })
 
-        // app.post("/api/authorize", {}, async (request, reply) => {
-        //     try {
-        //         console.log(request.body.email, request.body.password)
-        //         const {userId }= await authorizeUser(request.body.email, request.body.password)
-
-        //         reply.setCookie("accessToken", "222333", {
-        //             path: "/",
-        //             domain : "localhost",
-        //             httpOnly : true,
-        //        }).send({
-        //            data : "Testing cookie"
-        //        })
-        //     } catch (e) {
-        //         console.error(e)
-        //     }
-        // })
         await app.listen(3000)
         console.log(`Server listening on port: 3000`)
     } catch (e) {

@@ -9,10 +9,12 @@
     "dotenv": "^10.0.0",
     "fastify": "^3.21.6",
     "fastify-cookie": "^5.3.1",
+    "fastify-cors": "^6.0.2",
     "fastify-static": "^4.2.3",
     "jsonwebtoken": "^8.5.1",
     "mongo": "^0.1.0",
-    "mongodb": "^4.1.2"
+    "mongodb": "^4.1.2",
+    "nodemailer": "^6.7.0"
   },
   "devDependencies": {},
   "scripts": {

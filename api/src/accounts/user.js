@@ -35,7 +35,6 @@ export async function getUserFromCookies(request, reply) {
 
             // look up session
             const currentSession = await session.findOne({sessionToken})
-            console.log("currentSession", currentSession)
 
             // confirm session is valid
             if (currentSession.valid) {
@@ -43,7 +42,6 @@ export async function getUserFromCookies(request, reply) {
                 const currentUser = await user.findOne({
                     _id : ObjectId(currentSession.userId)
                 })
-                console.log("currentUser", currentUser)
 
                 // refresh tokens
                 await refreshTokens(sessionToken, currentUser._id, reply)

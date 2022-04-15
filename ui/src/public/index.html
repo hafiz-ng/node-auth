@@ -37,6 +37,20 @@
     <hr> 
     <br>
 
+    <form id="change-password-form">
+        <label for="password">Password:
+            <input type="password" name="oldPassword" id="oldPassword" >
+        </label>
+        
+        <label for="password">New Password:
+            <input type="password" name="newPassword" id="newPassword"><br><br>
+        </label>
+        <button type="submit">Change Password</button>
+    </label>
+    </form>
+
+    <br>
+    <br>
     <button onclick="logout()">Log Out</button>
 
     <script>
@@ -95,7 +109,34 @@
                 }, {})
                 // console.log("values", values)
                 
-                const res = fetch('http://localhost:3000/api/authorize', {
+                const res = await fetch('http://localhost:3000/api/authorize', {
+                    method : "POST",
+                    body : JSON.stringify(values),
+                    headers : {"Content-type" : "application/json; charset=UTF-8"},
+                })
+                } catch (e) {
+                    console.error(e)
+                }
+            })
+
+            // find form element
+            const passwordForm = document.getElementById("change-password-form")
+
+            // wait for event
+            passwordForm.addEventListener("submit", async (e) => {
+                e.preventDefault() // prevents form from refreshing the page when you hit submit
+                try {
+                    // Get all of the values from the form and reduce down to a single object 
+                    const values = Object.values(passwordForm).reduce((obj, field) => {
+
+                    if (field.name) {
+                        obj[field.name] = field.value
+                    }
+                    return obj
+                }, {})
+                
+                // Submit form
+                const res = await fetch('http://localhost:3000/api/change-password', {
                     method : "POST",
                     body : JSON.stringify(values),
                     headers : {"Content-type" : "application/json; charset=UTF-8"},

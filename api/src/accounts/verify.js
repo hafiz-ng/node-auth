@@ -31,20 +31,20 @@ export async function createVerifyEmailLink(email) {
 export async function validateVerifyEmail(token, email) {
     try {
         // create a hash aka token
-        const emailToken = await createVerifyEmailLink(email)
-
+        const emailToken = await createVerifyEmailToken(email)
+        
         // compare hash with token
-        const isValid = emailToken === token
+        var isValid = emailToken === token
 
-        // if successful
         if(isValid) {
             // update user, to make them verified
             const {user} = await import("../user/user.js")
             await user.updateOne({
-                "email.address" : email
+                "email.address" : email,
             }, 
             {
-                "email.verified" : true
+                // "email.address" : true
+                $set : {"email.verified" : true},
             })
 
             // return success

@@ -27,21 +27,21 @@ async function startApp() {
                     email,
                     token
                 }
-                const res = fetch('http://localhost:3000/api/verify', {
+                const res = await fetch('http://localhost:3000/api/verify', {
                     method : "POST",
                     body : JSON.stringify(values),
                     credentials : "include",
                     headers : {"Content-type" : "application/json; charset=UTF-8"},
                 })
-                console.log("res", res)
+                if (res.status === 200) {
+                    return reply.redirect("/")
+                }
+                reply.code(401).send()
+                console.log("res", res.status)
                 reply.code(200).send("All is good")
-            } catch (error) {
-                console.log("error", error)
-                reply.send({
-                    data : {
-                        status : "FAILED",
-                    }
-                })
+            } catch (e) {
+                console.log("e", e)
+                reply.code(401).send()
             }
         })
 

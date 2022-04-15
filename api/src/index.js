@@ -14,7 +14,9 @@ import { getUserFromCookies } from './accounts/user.js'
 import { request } from 'http'
 import { user } from './user/user.js'
 import { sendEmail, mailInit } from './mail/index.js'
-import { createVerifyEmailLink } from './accounts/verify.js'
+import { createVerifyEmailLink, validateVerifyEmail } from './accounts/verify.js'
+
+
 
 // ESM Specific fix
 const __filename = fileURLToPath(import.meta.url)
@@ -26,11 +28,15 @@ async function startApp() {
     try {
         await mailInit()
 
+        // app.register(fastifyCors, {
+        //     origin : [
+        //         /\.nodeauth.dev/,
+        //         "https://nodeauth.dev",
+        //     ], credentials : true
+        // })
+
         app.register(fastifyCors, {
-            origin : [
-                /\.nodeauth.dev/,
-                "https://nodeauth.dev",
-            ], credentials : true
+            origin : true, credentials : true
         })
 
         app.register(fastifyCookie, {
@@ -45,7 +51,7 @@ async function startApp() {
             try {
                 // verify the user login
                 const user = await getUserFromCookies(request, reply)
-                
+                console.log("user:", user)
                 // return user email, if it exists, otherwise return unauthorized
                     if (user?._id) {
                         reply.send({
@@ -108,7 +114,6 @@ async function startApp() {
 
         app.post("/api/authorize", {}, async (request, reply) => {
             try {
-                console.log(request.body.email, request.body.password)
                 const {isAuthorized, userId } = await authorizeUser(request.body.email, request.body.password)
 
                 if(isAuthorized) {
@@ -131,22 +136,38 @@ async function startApp() {
         app.post("/api/verify", {}, async (request, reply) => {
             try {
                 const {token, email } = request.body 
-                reply.send({
-                    data : {
-                        status : "SUCCESS",
-                    },
-                })
+                console.log("token, email", token, email)
+                const isValid = await validateVerifyEmail(token, email)
+
+                if (isValid) {
+                    return reply.code(200).send()
+                }
+                return reply.code(401).send()
             } catch (e) {
                 console.error(e)
-                reply.send({
-                    data : {
-                        status : "FAILED",
-                        userId
-                    }
-                })
+                return reply.code(401).send()
             }
         })
 
+        app.post("/api/change-password", {}, async (request, reply) => {
+            try {
+                // verify user login
+                const user = await getUserFromCookies(request, reply)
+                console.log("user:", user)
+
+                // verify user password from database
+                const { isAuthorized, userId } = await authorizeUser (
+                    user.email.address,
+                    request.body.oldPassword
+                )
+                
+                console.log("isAuthorized, userId", isAuthorized, userId)
+                return reply.code(200).send("All Good")
+            } catch (e) {
+                console.error(e)
+                return reply.code(401).send()
+            }
+        })
         await app.listen(3000)
         console.log(`Server listening on port: 3000`)
     } catch (e) {
